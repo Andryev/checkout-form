@@ -55,27 +55,36 @@ const useStyles  = theme => ({
 });
 const steps = ['Company Info', 'Email Integration', 'Logos', 'Personnel Info', 'Payment Details', 'Review your order'];
 
-function getStepContent(state) {
-    switch (state.count) {
-        case 0:
-            console.log(state.companyInfo);
-            return <CompanyInfoForm companyInfo={state.companyInfo}/>;
-        case 1:
-            console.log(state);
-            return <EmailIntegrationForm/>;
-        case 2:
-            return <LogosForm/>;
-        case 3:
-            return <PersonnelForm/>;
-        case 4:
-            return <PaymentForm/>;
-        default:
-            throw new Error('Unknown step');
-    }
-}
 
 
 class Checkout extends Component {
+    
+    getStepContent(state) {
+        switch (state.count) {
+            case 0:
+                return <CompanyInfoForm companyInfo={state.companyInfo} formRet={this.dataRet.bind(this)}/>;
+            case 1:
+                console.log(state);
+                return <EmailIntegrationForm formRet={this.dataRet.bind(this)}/>;
+            case 2:
+                return <LogosForm formRet={this.dataRet.bind(this)}/>;
+            case 3:
+                return <PersonnelForm formRet={this.dataRet.bind(this)}/>;
+            case 4:
+                return <PaymentForm formRet={this.dataRet.bind(this)}/>;
+            default:
+                throw new Error('Unknown step');
+        }
+    }
+    dataRet (data) {
+        console.log('checkout dataRet', data)
+        for(let i in data) {
+            console.log(i, data[i])
+            // let tempData = this.state.companyInfo
+            // tempData[i] = data[i];
+            // this.setState(`companyInfo.${i}`, data[i])
+        }
+    }
 
     constructor(props) {
         super(props);
@@ -92,7 +101,6 @@ class Checkout extends Component {
                 currentSoftware: ""
             },
         };
-
     }
 
     render() {
@@ -125,7 +133,7 @@ class Checkout extends Component {
                                 </React.Fragment>
                             ) : (
                                 <React.Fragment>
-                                    {getStepContent(this.state)}
+                                    {this.getStepContent(this.state)}
                                     <div className={classes.buttons}>
                                         {this.state.count !== 0 && (
                                             <Fab variant="contained"

@@ -16,12 +16,12 @@ export default class CompanyInfoForm extends Component {
         // check it out: we get the evt.target.name (which will be either "email" or "password")
         // and use it to target the key on our `state` object with the same name, using bracket syntax
         this.setState({ [field]: evt.target.value });
+
+        this.props.formRet({[field]: evt.target.value})
     }
 
-
-
     render() {
-        console.log(this.props);
+        console.log('render', this.props);
         return (
             <React.Fragment>
                 <Typography variant="h6" gutterBottom>
@@ -38,7 +38,7 @@ export default class CompanyInfoForm extends Component {
                             fullWidth
                             autoComplete="company-name"
                             defaultValue={this.props.companyInfo.companyName}
-                            onChange={(event)=>this.handleChange(event, "count")}
+                            onChange={(event)=>this.handleChange(event, "companyName")}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -126,6 +126,14 @@ export default class CompanyInfoForm extends Component {
                         />
                     </Grid>
                 </Grid>
+                {/* <Button click={() => this.props.formRet('CompanyInfoForm')}>Click</Button> */}
+                <Fab
+                    variant="contained"
+                    size="small"
+                    onClick={() => this.props.formRet('CompanyInfoForm')}
+                >
+                    Click
+                </Fab>
             </React.Fragment>
         );
     }
