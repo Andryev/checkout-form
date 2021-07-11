@@ -1,110 +1,119 @@
+import http from "./http-common";
+
 const createCompany = options => {
-  return window
-      .fetch(`http://localhost:8080/company`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(options)
-      })
-      .then(res => {
-        if (res.status === 200) {
-          return res.json();
-        } else {
-          return null;
-        }
-      })
-      .then(data => {
-        if (!data || data.error) {
-          console.log("API error:", { data });
-          throw new Error("PaymentIntent API Error");
-        } else {
-          return data;
-        }
-      });
+    return http
+        .post(`/subscription`,
+            options
+        )
+        .then(res => {
+            if (res.status === 200 || res.status === 201) {
+                return res.data;
+            } else {
+                return null;
+            }
+        })
+        .then(data => {
+            if (!data || data.error) {
+                console.log("API error:", {data});
+                throw new Error("Company API Error");
+            } else {
+                return data;
+            }
+        });
+};
+
+const updateCompany = options => {
+    return http
+        .put(`/subscription`,
+            options
+        )
+        .then(res => {
+            if (res.status === 200 || res.status === 201) {
+                return res.data;
+            } else {
+                return null;
+            }
+        })
+        .then(data => {
+            if (!data || data.error) {
+                console.log("API error:", {data});
+                throw new Error("Company API Error");
+            } else {
+                return data;
+            }
+        });
 };
 
 const createPaymentIntent = options => {
-  return window
-    .fetch(`/create-payment-intent`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(options)
-    })
-    .then(res => {
-      if (res.status === 200) {
-        return res.json();
-      } else {
-        return null;
-      }
-    })
-    .then(data => {
-      if (!data || data.error) {
-        console.log("API error:", { data });
-        throw new Error("PaymentIntent API Error");
-      } else {
-        return data.client_secret;
-      }
-    });
+    return http
+        .post(`/create-subscription`,
+            options
+        )
+        .then(res => {
+            if (res.status === 200 || res.status === 201) {
+                return res.data;
+            } else {
+                return null;
+            }
+        });
 };
 
-const getProductDetails = options => {
-  return window
-    .fetch(`/product-details`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-    .then(res => {
-      if (res.status === 200) {
-        return res.json();
-      } else {
-        return null;
-      }
-    })
-    .then(data => {
-      if (!data || data.error) {
-        console.log("API error:", { data });
-        throw Error("API Error");
-      } else {
-        return data;
-      }
-    });
+const createCustomer = options => {
+    return http
+        .post(`/create-customer/` + options)
+        .then(res => {
+            if (res.status === 200 || res.status === 201) {
+                return res.data.customer;
+            } else {
+                return null;
+            }
+        });
 };
 
-const getPublicStripeKey = options => {
-  return window
-    .fetch(`http://localhost:8080/public-key`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-    .then(res => {
-      if (res.status === 200) {
-        return res.json();
-      } else {
-        return null;
-      }
-    })
-    .then(data => {
-      if (!data || data.error) {
-        console.log("API error:", { data });
-        throw Error("API Error");
-      } else {
-        return data.publicKey;
-      }
-    });
+const getPublicStripeKey = () => {
+    return http.get(`/public-key`)
+        .then(data => {
+            if (!data || data.error) {
+                console.log("API error:", {data});
+                throw Error("API Error");
+            } else {
+                return data.data;
+            }
+        });
+};
+
+const getProduct = id => {
+    return http.get(`/plan/by-priceId/`+id)
+        .then(data => {
+            if (!data || data.error) {
+                console.log("API error:", {data});
+                throw Error("API Error");
+            } else {
+                return data.data;
+            }
+        });
+};
+
+const getPlans = () => {
+    return http.get(`/plan`)
+        .then(data => {
+            if (!data || data.error) {
+                console.log("API error:", {data});
+                throw Error("API Error");
+            } else {
+                return data.data;
+            }
+        });
 };
 
 const api = {
-  createPaymentIntent,
-  getPublicStripeKey: getPublicStripeKey,
-  getProductDetails: getProductDetails,
-  createCompany: createCompany
+    createPaymentIntent,
+    createCustomer,
+    getPlans,
+    getProduct,
+    getPublicStripeKey: getPublicStripeKey,
+    createCompany: createCompany,
+    updateCompany: updateCompany
 };
 
 export default api;

@@ -1,20 +1,40 @@
 import "../App.css";
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import {BiCheckboxSquare} from "react-icons/bi";
 import Fab from "@material-ui/core/Fab";
-import Checkout from "./Checkout";
 import {useHistory} from "react-router-dom";
+import api from "../api";
 
-function goCheckout() {
-            return <Checkout />;
-}
+
 
 export default function Pricing() {
-    const { push } = useHistory()
+
+    const { push } = useHistory();
+    const [plans, setPlans] = useState([]);
+
+    useEffect(() => {
+        getAllPlans();
+    }, []);
+
+    const getAllPlans = () => {
+        api.getPlans().then(plan =>  setPlans(plan));
+    };
+
+    let proprietor = null;
+    let gold = null;
+    let silver = null;
+    let unlimited = null;
+
+    proprietor = plans.find(x => x.type === 'PROPRIETOR');
+    gold = plans.find(x => x.type === 'GOLD');
+    silver = plans.find(x => x.type === 'SILVER');
+    unlimited = plans.find(x => x.type === 'UNLIMITED');
+
+
 
     return (
         <React.Fragment >
@@ -23,7 +43,7 @@ export default function Pricing() {
             <Container maxWidth="sm" component="main">
                 <Typography component="h1" variant="h4" align="center" color="textPrimary" gutterBottom
                             className="title">
-                    <h2>Pricing</h2>
+                    <h2 className="title">Pricing</h2>
                 </Typography>
             </Container>
             {/* End hero unit */}
@@ -60,13 +80,13 @@ export default function Pricing() {
                                     <li>Custom Metrics</li>
                                 </ul>
                             </div>
-
+                            {proprietor !== undefined && (
                             <div className="column">
                                 <ul className="price">
                                     <li className="header">
-                                        Sole Proprietor
+                                        {proprietor?.planName}
                                         <br/>
-                                        <span className="dollar">145</span>
+                                        <span className="dollar">{proprietor?.value}</span><span className="month">/Month</span>
                                         <br/>
                                         <br/>
                                     </li>
@@ -136,19 +156,22 @@ export default function Pricing() {
                                     <li className="footer">
                                         {/*<Link to="/checkout" >*/}
                                             <Fab variant="extended" color="primary" className="footer-button"
-                                                 onClick={() => push('/checkout')}>
-                                                Go Sole Proprietor </Fab>
+                                                 onClick={() => {
+                                                     push('/checkout/'+unlimited?.priceId);
+                                                 }}>
+                                                Go {proprietor?.planName} </Fab>
                                         {/*</Link>*/}
                                     </li>
                                 </ul>
                             </div>
-
+                            )}
+                            {silver !== undefined && (
                             <div className="column">
                                 <ul className="price">
                                     <li className="header">
-                                        Silver
+                                        {silver?.planName}
                                         <br/>
-                                        <span className="dollar">205</span>
+                                        <span className="dollar">{silver?.value}</span><span className="month">/Month</span>
                                         <br/>
                                         <br/>
                                     </li>
@@ -216,18 +239,19 @@ export default function Pricing() {
                                         <BiCheckboxSquare color="red"/>
                                     </li>
                                     <li className="footer">
-                                        <Fab variant="extended" color="primary" onClick={() => push('/checkout')}
-                                             className="footer-button"> Go Silver </Fab>
+                                        <Fab variant="extended" color="primary" onClick={() => push('/checkout/' + silver?.priceId)}
+                                             className="footer-button"> Go {silver?.planName} </Fab>
                                     </li>
                                 </ul>
                             </div>
-
+                            )}
+                            {gold !== undefined && (
                             <div className="column">
                                 <ul className="price">
                                     <li className="header">
-                                        Gold
+                                        {gold?.planName}
                                         <br/>
-                                        <span className="dollar">250</span>
+                                        <span className="dollar">{gold?.value}</span><span className="month">/Month</span>
                                         <br/>
                                         <br/>
                                     </li>
@@ -295,17 +319,19 @@ export default function Pricing() {
                                         <BiCheckboxSquare color="green"/>
                                     </li>
                                     <li className="footer">
-                                        <Fab variant="extended" color="primary" onClick={() => push('/checkout')}
-                                             className="footer-button"> Go Gold </Fab>
+                                        <Fab variant="extended" color="primary" onClick={() => push('/checkout/' + gold?.priceId)}
+                                             className="footer-button"> Go {gold?.planName} </Fab>
                                     </li>
                                 </ul>
                             </div>
+                            )}
+                            {unlimited !== undefined && (
                             <div className="column">
                                 <ul className="price">
                                     <li className="header">
-                                        Unlimited
+                                        {unlimited?.planName}
                                         <br/>
-                                        <span className="dollar">345</span>
+                                        <span className="dollar">{unlimited?.value}</span><span className="month">/Month</span>
                                         <br/>
                                         <br/>
                                     </li>
@@ -373,11 +399,12 @@ export default function Pricing() {
                                         <BiCheckboxSquare color="green"/>
                                     </li>
                                     <li className="footer">
-                                        <Fab variant="extended" color="primary" onClick={() => push('/checkout')}
-                                             className="footer-button"> Go Unlimited </Fab>
+                                        <Fab variant="extended" color="primary" onClick={() => push('/checkout/' + unlimited?.priceId)}
+                                             className="footer-button"> Go {unlimited?.planName} </Fab>
                                     </li>
                                 </ul>
                             </div>
+                            )}
                         </div>
                     </div>
                 </Typography>

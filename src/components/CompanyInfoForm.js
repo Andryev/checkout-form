@@ -2,26 +2,38 @@ import React, {Component} from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import Fab from "@material-ui/core/Fab";
-import {makeStyles} from "@material-ui/core";
-
+import util from "../util/util";
 
 export default class CompanyInfoForm extends Component {
 
+    company = {
+        id: null,
+        companyName: "",
+        businessPhone: "",
+        businessAddress: "",
+        ownerName: "",
+        ownerMail: "",
+        ownerPhone: "",
+        yearsBusiness: "",
+        currentSoftware: ""
+    };
     constructor(props) {
         super(props);
-        console.log(props.companyInfo);
+        this.company = this.props.company;
+        this.setState({
+            email_error_text: "Sorry, this is not a valid email"
+        });
     }
-    handleChange (evt, field) {
-        // check it out: we get the evt.target.name (which will be either "email" or "password")
-        // and use it to target the key on our `state` object with the same name, using bracket syntax
-        this.setState({ [field]: evt.target.value });
 
-        this.props.formRet({[field]: evt.target.value})
+    handleChange (evt, field) {
+        this.company = {
+            ...this.company,
+            [field]: evt.target.value
+        };
+        this.props.formRet("company", this.company)
     }
 
     render() {
-        console.log('render', this.props);
         return (
             <React.Fragment>
                 <Typography variant="h6" gutterBottom>
@@ -37,7 +49,7 @@ export default class CompanyInfoForm extends Component {
                             variant="outlined"
                             fullWidth
                             autoComplete="company-name"
-                            defaultValue={this.props.companyInfo.companyName}
+                            defaultValue={this.props.company.companyName}
                             onChange={(event)=>this.handleChange(event, "companyName")}
                         />
                     </Grid>
@@ -50,7 +62,8 @@ export default class CompanyInfoForm extends Component {
                             label="Business Phone number"
                             fullWidth
                             autoComplete="business-phone"
-                            value={this.props.businessPhone}
+                            defaultValue={this.props.company.businessPhone}
+                            onChange={(event)=>this.handleChange(event, "businessPhone")}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -62,7 +75,8 @@ export default class CompanyInfoForm extends Component {
                             fullWidth
                             variant="outlined"
                             autoComplete="shipping address-line1"
-                            value={this.props.businessAddress}
+                            defaultValue={this.props.company.businessAddress}
+                            onChange={(event)=>this.handleChange(event, "businessAddress")}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -74,19 +88,23 @@ export default class CompanyInfoForm extends Component {
                             fullWidth
                             variant="outlined"
                             autoComplete="owner name"
-                            value={this.props.ownerName}
+                            defaultValue={this.props.company.ownerName}
+                            onChange={(event)=>this.handleChange(event, "ownerName")}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
                             required
+                            error={!util.validateEmail(this.props.company.ownerMail)}
                             id="ownerMail"
                             name="ownerMail"
                             label="Owner Email"
                             fullWidth
                             variant="outlined"
                             autoComplete="owner mail"
-                            value={this.props.ownerMail}
+                            helperText={util.validateEmail(this.props.company.ownerMail) ? '' : 'Sorry, this is not a valid email'}
+                            defaultValue={this.props.company.ownerMail}
+                            onChange={(event)=>this.handleChange(event, "ownerMail")}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -98,7 +116,8 @@ export default class CompanyInfoForm extends Component {
                             fullWidth
                             variant="outlined"
                             autoComplete="owner phone"
-                            value={this.props.ownerPhone}
+                            defaultValue={this.props.company.ownerPhone}
+                            onChange={(event)=>this.handleChange(event, "ownerPhone")}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -108,9 +127,11 @@ export default class CompanyInfoForm extends Component {
                             name="yearsBusiness"
                             label="Years in Business"
                             fullWidth
+                            type="number"
                             variant="outlined"
                             autoComplete="owner phone"
-                            value={this.props.yearsBusiness}
+                            defaultValue={this.props.company.yearsBusiness}
+                            onChange={(event)=>this.handleChange(event, "yearsBusiness")}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -122,18 +143,11 @@ export default class CompanyInfoForm extends Component {
                             fullWidth
                             variant="outlined"
                             autoComplete="current software"
-                            value={this.props.currentSoftware}
+                            defaultValue={this.props.company.currentSoftware}
+                            onChange={(event)=>this.handleChange(event, "currentSoftware")}
                         />
                     </Grid>
                 </Grid>
-                {/* <Button click={() => this.props.formRet('CompanyInfoForm')}>Click</Button> */}
-                <Fab
-                    variant="contained"
-                    size="small"
-                    onClick={() => this.props.formRet('CompanyInfoForm')}
-                >
-                    Click
-                </Fab>
             </React.Fragment>
         );
     }
